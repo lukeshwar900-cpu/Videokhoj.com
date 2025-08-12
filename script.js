@@ -130,8 +130,9 @@ async function askAI(query) {
     aiResponse.textContent = 'AI जवाब ढूंढ रहा है...';
 
     // Serverless Function को कॉल करें
+    // यहाँ पर URL को अपडेट किया गया है
     try {
-        const response = await fetch('/api', {
+        const response = await fetch('https://videokhoj-com.vercel.app/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
