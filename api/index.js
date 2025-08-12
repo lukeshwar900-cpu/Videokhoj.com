@@ -1,7 +1,7 @@
 // यह Vercel Serverless Function का कोड है जो AI से बात करेगा।
 
 // अपनी Gemini API Key को यहाँ डालें
-const GEMINI_API_KEY = 'AIzaSyBz0px2V7HfS0TYVdsvXrlIPDTcpOrK2MM';
+const GEMINI_API_KEY = 'AIzaSyBsZ08oXLSc4J-91J3bA_UKp7GT03ot3Fc';
 
 export default async function handler(req, res) {
   // सिर्फ POST रिक्वेस्ट स्वीकार करें
