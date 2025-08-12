@@ -1,6 +1,6 @@
 // यह Vercel Serverless Function का कोड है जो OpenAI से बात करेगा।
 
-const OPENAI_API_KEY = 'Sk-proj-feZQujGL5Dtif0H8XFINbGiygfodCe9jMSC1qBbYw9lsbQGktVeNbFmdpSaX-i88OIG44-lervT3BlbkFJDJMp7mGlevTULSt5U5atdPdaSuhBwxyB0Dutu45WC-lV8UbTSYxK2wkiqw_7dihMMmGaRjEeIA';
+const OPENAI_API_KEY = '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';
 
 export default async function handler(req, res) {
   // सिर्फ POST रिक्वेस्ट स्वीकार करें
