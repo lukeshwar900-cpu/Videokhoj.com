@@ -1,7 +1,6 @@
-// यह Vercel Serverless Function का कोड है जो AI से बात करेगा।
+// यह Vercel Serverless Function का कोड है जो OpenAI से बात करेगा।
 
-// अपनी Gemini API Key को यहाँ डालें
-const GEMINI_API_KEY = 'AIzaSyBsZ08oXLSc4J-91J3bA_UKp7GT03ot3Fc';
+const OPENAI_API_KEY = 'Sk-proj-feZQujGL5Dtif0H8XFINbGiygfodCe9jMSC1qBbYw9lsbQGktVeNbFmdpSaX-i88OIG44-lervT3BlbkFJDJMp7mGlevTULSt5U5atdPdaSuhBwxyB0Dutu45WC-lV8UbTSYxK2wkiqw_7dihMMmGaRjEeIA';
 
 export default async function handler(req, res) {
   // सिर्फ POST रिक्वेस्ट स्वीकार करें
@@ -17,26 +16,37 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      // यहाँ मॉडल का नाम बदला गया है
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GEMINI_API_KEY}`,
+      'https://api.openai.com/v1/chat/completions',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: prompt }],
         }),
       }
     );
 
     const data = await response.json();
-    console.log(data);
-
-    // AI से मिले जवाब को वापस भेजें
-    res.status(200).json(data);
+    
+    // OpenAI से मिले जवाब को वापस भेजें
+    if (data && data.choices && data.choices.length > 0) {
+      res.status(200).json({
+        candidates: [{
+          content: {
+            parts: [{ text: data.choices[0].message.content }]
+          }
+        }]
+      });
+    } else {
+      console.error('Error with OpenAI API:', data);
+      res.status(500).json({ error: 'Failed to get a valid response from AI.' });
+    }
   } catch (error) {
-    console.error('Error with Gemini API:', error);
+    console.error('Error with OpenAI API:', error);
     res.status(500).json({ error: 'Failed to get response from AI.' });
   }
 }
