@@ -3,19 +3,24 @@ const API_KEY = 'AIzaSyA5QG5m4SOxSOB_7hX3Bx2LKk1u9SH8r7Q';
 
 const searchButton = document.getElementById('searchButton');
 const shortsButton = document.getElementById('shortsButton');
+const askAiButton = document.getElementById('askAiButton');
 const loadMoreButton = document.getElementById('loadMoreButton');
 const searchInput = document.getElementById('searchInput');
 const videoContainer = document.getElementById('video-container');
 const playerContainer = document.getElementById('player-container');
 const videoPlayer = document.getElementById('video-player');
 const loadMoreContainer = document.getElementById('load-more-container');
+const aiResponseContainer = document.getElementById('aiResponseContainer');
+const aiResponse = document.getElementById('aiResponse');
+
 
 let nextPageToken = '';
-let currentSearchType = ''; // 'trending', 'search', or 'shorts'
+let currentSearchType = ''; // 'trending', 'search', 'shorts' or 'ai_search'
 
 searchButton.addEventListener('click', () => searchVideos(searchInput.value));
 shortsButton.addEventListener('click', searchShorts);
 loadMoreButton.addEventListener('click', loadMoreVideos);
+askAiButton.addEventListener('click', () => askAI(searchInput.value));
 
 document.addEventListener('DOMContentLoaded', getTrendingVideos);
 
@@ -25,6 +30,7 @@ async function getTrendingVideos() {
     
     playerContainer.style.display = 'none';
     videoContainer.style.display = 'flex';
+    aiResponseContainer.style.display = 'none';
     
     videoContainer.innerHTML = '<h2>ट्रेंडिंग वीडियो लोड हो रहे हैं...</h2>';
     loadMoreContainer.style.display = 'none';
@@ -53,6 +59,7 @@ async function searchVideos(query, isNewSearch = true) {
         nextPageToken = '';
         playerContainer.style.display = 'none';
         videoContainer.style.display = 'flex';
+        aiResponseContainer.style.display = 'none';
         videoContainer.innerHTML = '<h2>खोज रहे हैं...</h2>';
         loadMoreContainer.style.display = 'none';
     }
@@ -84,6 +91,7 @@ async function searchShorts() {
     
     playerContainer.style.display = 'none';
     videoContainer.style.display = 'flex';
+    aiResponseContainer.style.display = 'none';
     
     videoContainer.innerHTML = '<h2>शॉर्ट्स खोज रहे हैं...</h2>';
     loadMoreContainer.style.display = 'none';
@@ -104,6 +112,45 @@ async function searchShorts() {
     } catch (error) {
         console.error('Error fetching shorts:', error);
         videoContainer.innerHTML = '<p>शॉर्ट्स नहीं मिल सके।</p>';
+    }
+}
+
+// यह नया AI फ़ंक्शन है
+async function askAI(query) {
+    if (!query) return;
+
+    currentSearchType = 'ai_search';
+    nextPageToken = '';
+    
+    playerContainer.style.display = 'none';
+    videoContainer.style.display = 'none';
+    loadMoreContainer.style.display = 'none';
+    
+    aiResponseContainer.style.display = 'block';
+    aiResponse.textContent = 'AI जवाब ढूंढ रहा है...';
+
+    // Serverless Function को कॉल करें
+    try {
+        const response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: query }),
+        });
+
+        const data = await response.json();
+        
+        if (data && data.candidates && data.candidates.length > 0) {
+            const aiText = data.candidates[0].content.parts[0].text;
+            aiResponse.innerHTML = aiText;
+        } else {
+            aiResponse.textContent = 'AI कोई जवाब नहीं दे पाया।';
+        }
+
+    } catch (error) {
+        console.error('Error fetching AI response:', error);
+        aiResponse.textContent = 'कुछ गलत हो गया।';
     }
 }
 
@@ -180,11 +227,12 @@ function closePlayer() {
     
     if (currentSearchType === 'trending') {
         videoContainer.style.display = 'flex';
-        // ट्रेंडिंग वीडियो वापस दिखाने के लिए कुछ नहीं करना, क्योंकि वे पहले से ही हैं
     } else if (currentSearchType === 'search') {
         videoContainer.style.display = 'flex';
-        // सर्च रिजल्ट्स वापस दिखाने के लिए कुछ नहीं करना, क्योंकि वे पहले से ही हैं
     } else if (currentSearchType === 'shorts') {
         videoContainer.style.display = 'flex';
+    } else if (currentSearchType === 'ai_search') {
+        aiResponseContainer.style.display = 'block';
     }
 }
+
