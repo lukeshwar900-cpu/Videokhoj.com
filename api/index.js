@@ -1,6 +1,6 @@
-// यह Vercel Serverless Function का कोड है जो OpenAI से बात करेगा।
+// यह Vercel Serverless Function का कोड है जो Hugging Face AI से बात करेगा।
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const HF_TOKEN = process.env.HF_TOKEN;
 
 export default async function handler(req, res) {
   // सिर्फ POST रिक्वेस्ट स्वीकार करें
@@ -16,23 +16,23 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      'https://api.openai.com/v1/chat/completions',
+      'https://router.huggingface.co/v1/chat/completions',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${HF_TOKEN}`,
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'openai/gpt-oss-20b:fireworks-ai',
           messages: [{ role: 'user', content: prompt }],
         }),
       }
     );
 
     const data = await response.json();
-    
-    // OpenAI से मिले जवाब को वापस भेजें
+
+    // Hugging Face से मिले जवाब को वापस भेजें
     if (data && data.choices && data.choices.length > 0) {
       res.status(200).json({
         candidates: [{
@@ -42,11 +42,11 @@ export default async function handler(req, res) {
         }]
       });
     } else {
-      console.error('Error with OpenAI API:', data);
+      console.error('Error with Hugging Face API:', data);
       res.status(500).json({ error: 'Failed to get a valid response from AI.' });
     }
   } catch (error) {
-    console.error('Error with OpenAI API:', error);
+    console.error('Error with Hugging Face API:', error);
     res.status(500).json({ error: 'Failed to get response from AI.' });
   }
 }
