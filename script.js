@@ -1,5 +1,5 @@
 // अपनी API Key यहाँ डालें (जो आपने बनाई है)
-const API_KEY = 'AIzaSyA5QG5m4SOxSOB_7hX3Bx2LKk1u9SH8r7Q';
+const API_KEY = 'AIzaSyBsZ08oXLSc4J-91J3bA_UKp7GT03ot3Fc';
 
 const searchButton = document.getElementById('searchButton');
 const shortsButton = document.getElementById('shortsButton');
